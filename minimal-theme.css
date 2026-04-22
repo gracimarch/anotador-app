@@ -1,0 +1,25 @@
+/* para usar este tema hay q aplicar la clase .minimal-theme al body */
+
+body.minimal-theme {
+    --bg-color: #F4F5F7;
+    --surface-color: #FFFFFF;
+    
+    --text-primary: #1F2937;
+    --text-secondary: #6B7280;
+    --text-muted: #9CA3AF;
+    
+    --team-nosotros-color: #3B82F6;
+    --team-nosotros-bg: #EFF6FF;
+    --team-ellos-color: #EF4444;
+    --team-ellos-bg: #FEF2F2;
+
+    --divider-color: #E5E7EB;
+    --shadow-color: rgba(0, 0, 0, 0.05);
+
+    --main-font: 'Inter', sans-serif;
+    --fancy-font: 'Inter', sans-serif;
+}
+
+body.minimal-theme::before {
+    display: none;
+}
