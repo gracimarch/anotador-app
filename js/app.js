@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btnCloseModal: document.getElementById('btn-close-modal'),
         btnNewGame: document.getElementById('btn-new-game'),
         btnReset: document.getElementById('btn-reset'),
+        btnInstall: document.getElementById('btn-install'),
         btnThemeToggle: document.getElementById('btn-theme-toggle'),
         btnUpdate: document.getElementById('btn-update'),
         modeSelect: document.getElementById('game-mode-select'),
@@ -424,6 +425,36 @@ document.addEventListener('DOMContentLoaded', () => {
         elements.btnNewGame.addEventListener('click', resetGame);
 
         elements.btnThemeToggle.addEventListener('click', toggleTheme);
+
+        // PWA Install prompt logic
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            if (elements.btnInstall) {
+                elements.btnInstall.style.display = 'inline-flex';
+            }
+        });
+
+        if (elements.btnInstall) {
+            elements.btnInstall.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    console.log(`User response to the install prompt: ${outcome}`);
+                    deferredPrompt = null;
+                    elements.btnInstall.style.display = 'none';
+                }
+            });
+        }
+
+        window.addEventListener('appinstalled', () => {
+            deferredPrompt = null;
+            console.log('PWA was installed');
+            if (elements.btnInstall) {
+                elements.btnInstall.style.display = 'none';
+            }
+        });
 
         elements.btnUpdate.addEventListener('click', () => {
             if (!('serviceWorker' in navigator)) return;

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'anotador-cache-v2.1';
+const CACHE_NAME = 'anotador-cache-v2.2';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -8,8 +8,7 @@ const urlsToCache = [
   '/manifest.json',
   '/icons/icon-192x192.png',
   '/icons/icon-512x512.png',
-  '/icons/favicon.ico',
-  'https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Metamorphous&family=Modern+Antiqua&display=swap'
+  '/icons/anotador-favicon.png'
 ];
 
 self.addEventListener('install', event => {

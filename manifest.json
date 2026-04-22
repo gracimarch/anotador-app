@@ -2,7 +2,7 @@
   "name": "Anotador Truco",
   "short_name": "Truco",
   "description": "Anotador de truco online y contador de puntos para el truco argentino.",
-  "start_url": ".",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#E8D8C4",
   "theme_color": "#E8D8C4",
