@@ -206,7 +206,7 @@ body.dark-mode .mode-select {
     border: none;
     color: var(--text-secondary);
     cursor: pointer;
-    padding: 8px;
+    padding: 10px;
     border-radius: 50%;
     transition: all 0.2s ease;
     display: flex;
@@ -376,7 +376,7 @@ body[data-mode="15"] .casita-divider {
     height: 36px;
     background-color: var(--surface-color);
     color: var(--text-secondary);
-    font-size: 1.25rem;
+    font-size: 1rem;
     display: flex;
     align-items: center;
     justify-content: center;

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'anotador-cache-v2.2';
+const CACHE_NAME = 'anotador-cache-v1.3.2';
 const urlsToCache = [
   '/',
   '/index.html',
