@@ -485,6 +485,16 @@ document.addEventListener('DOMContentLoaded', () => {
             if (confirmCallback) confirmCallback();
             closeConfirmModal();
         });
+
+        // efecto visual de tap para móviles en botones
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('touchstart', function () {
+                this.classList.add('active-tap');
+                setTimeout(() => {
+                    this.classList.remove('active-tap');
+                }, 150);
+            }, { passive: true });
+        });
     }
 
     init();

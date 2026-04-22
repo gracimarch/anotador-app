@@ -215,7 +215,7 @@ body.dark-mode .mode-select {
     font-size: 1.25rem;
 }
 
-.btn-icon:active {
+.btn-icon:active, .btn-icon.active-tap {
     background-color: var(--bg-color);
     color: var(--text-primary);
 }
@@ -389,7 +389,7 @@ body[data-mode="15"] .casita-divider {
     transition: all 0.3s ease;
 }
 
-.btn-control:active {
+.btn-control:active, .btn-control.active-tap {
     background-color: var(--bg-highlight);
     color: var(--primary-color);
     border-color: var(--primary-color);
@@ -502,7 +502,7 @@ body[data-mode="15"] .casita-divider {
     color: var(--surface-color);
 }
 
-.btn-primary:active {
+.btn-primary:active, .btn-primary.active-tap {
     background-color: var(--text-secondary);
 }
 
@@ -517,7 +517,7 @@ body[data-mode="15"] .casita-divider {
     color: var(--text-primary);
 }
 
-.btn-secondary:active {
+.btn-secondary:active, .btn-secondary.active-tap {
     background-color: var(--divider-color);
 }
 

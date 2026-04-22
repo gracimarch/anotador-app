@@ -1,9 +1,10 @@
-const CACHE_NAME = 'anotador-cache-v2';
+const CACHE_NAME = 'anotador-cache-v2.1';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/styles.css',
-  '/app.js',
+  '/css/styles.css',
+  '/css/minimal-theme.css',
+  '/js/app.js',
   '/manifest.json',
   '/icons/icon-192x192.png',
   '/icons/icon-512x512.png',
@@ -33,7 +34,7 @@ self.addEventListener('activate', event => {
       );
     })
   );
-  // Reclamar los clientes inmediatamente para que la nueva versión tome el control
+
   event.waitUntil(self.clients.claim());
 });
 
