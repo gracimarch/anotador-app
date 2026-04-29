@@ -50,7 +50,7 @@
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <!-- svg -->
+    <!-- svg symbols -->
     <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
         <symbol id="icon-sun" viewBox="0 0 24 24">
             <path d="M12 2.25a.75.75 0 0 1 .75.75v2.25a.75.75 0 0 1-1.5 0V3a.75.75 0 0 1 .75-.75ZM7.5 12a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM18.894 6.166a.75.75 0 0 0-1.06-1.06l-1.591 1.59a.75.75 0 1 0 1.06 1.061l1.591-1.59ZM21.75 12a.75.75 0 0 1-.75.75h-2.25a.75.75 0 0 1 0-1.5H21a.75.75 0 0 1 .75.75ZM17.834 18.894a.75.75 0 0 0 1.06-1.06l-1.59-1.591a.75.75 0 1 0-1.061 1.06l1.59 1.591ZM12 18a.75.75 0 0 1 .75.75V21a.75.75 0 0 1-1.5 0v-2.25A.75.75 0 0 1 12 18ZM7.758 17.303a.75.75 0 0 0-1.061-1.06l-1.591 1.59a.75.75 0 0 0 1.06 1.061l1.591-1.59ZM6 12a.75.75 0 0 1-.75.75H3a.75.75 0 0 1 0-1.5h2.25A.75.75 0 0 1 6 12ZM6.697 7.757a.75.75 0 0 0 1.06-1.06l-1.59-1.591a.75.75 0 0 0-1.061 1.06l1.59 1.591Z"/>
@@ -74,16 +74,25 @@
         <symbol id="icon-minus" viewBox="0 0 24 24">
             <path d="M4.5 12.75a.75.75 0 0 1 .75-.75h13.5a.75.75 0 0 1 0 1.5H5.25a.75.75 0 0 1-.75-.75Z"/>
         </symbol>
+        <symbol id="icon-menu" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" d="M4 6h16M4 12h16M4 18h16"/>
+        </symbol>
+        <symbol id="icon-close" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" d="M18 6L6 18M6 6l12 12"/>
+        </symbol>
+        <symbol id="icon-user-plus" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M16 11c1.657 0 3-1.343 3-3s-1.343-3-3-3m3 14v-1a4 4 0 0 0-3-3.874M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 9v-1a7 7 0 0 1 14 0v1M19 8v6m-3-3h6"/>
+        </symbol>
     </svg>
 
     <div class="app-container">
         <header class="app-header">
             <div class="header-title">
                 <h1>Anotador</h1>
-                <span class="subtitle">TRUCO</span>
+                <p id="header-mode-label" class="header-mode-label"></p>
             </div>
             <div class="header-actions">
-                <button id="btn-install" class="btn-icon" aria-label="Instalar App" title="Instalar App">
+                <button id="btn-install" class="btn-icon" aria-label="Instalar App" title="Instalar App" style="display:none;">
                     <svg class="icon" aria-hidden="true"><use href="#icon-download"></use></svg>
                 </button>
                 <button id="btn-theme-toggle" class="btn-icon" aria-label="Cambiar tema" title="Cambiar tema">
@@ -95,78 +104,32 @@
                 <button id="btn-reset" class="btn-icon" aria-label="Reiniciar juego" title="Reiniciar juego">
                     <svg class="icon" aria-hidden="true"><use href="#icon-trash"></use></svg>
                 </button>
+                <button id="btn-menu" class="btn-icon" aria-label="Seleccionar modo" title="Seleccionar modo" aria-expanded="false">
+                    <svg class="icon" aria-hidden="true"><use href="#icon-menu"></use></svg>
+                </button>
             </div>
         </header>
-        
-        <main class="score-board">
-            <!-- equipo nosotros -->
-            <section class="team-section" id="team-nosotros" data-team="nosotros">
-                <div class="team-header">
-                    <h2>Nosotros</h2>
-                    <span class="score-number" id="score-num-nosotros">0</span>
-                </div>
-                
-                <div class="casitas-container" id="casitas-nosotros">
-                    <!-- las casitas se inyectarán acá con js -->
-                </div>
-                
-                <div class="controls">
-                    <button class="btn-control btn-minus" data-action="minus" aria-label="Restar punto Nosotros">
-                        <svg class="icon" aria-hidden="true"><use href="#icon-minus"></use></svg>
-                    </button>
-                    <button class="btn-control btn-plus" data-action="plus" aria-label="Sumar punto Nosotros">
-                        <svg class="icon" aria-hidden="true"><use href="#icon-plus"></use></svg>
-                    </button>
-                </div>
-                
-                <!--<div class="instruction-pill">
-                    <span>• TOQUE +1</span>
-                    <span>• MANTENER -1</span>
-                </div>-->
-                
-                <div class="touch-overlay"></div>
-            </section>
 
-            <div class="divider"></div>
-
-            <!-- equipo ellos -->
-            <section class="team-section" id="team-ellos" data-team="ellos">
-                <div class="team-header">
-                    <h2>Ellos</h2>
-                    <span class="score-number" id="score-num-ellos">0</span>
-                </div>
-                
-                <div class="casitas-container" id="casitas-ellos">
-                    <!-- las casitas se inyectarán acá con js -->
-                </div>
-                
-                <div class="controls">
-                    <button class="btn-control btn-minus" data-action="minus" aria-label="Restar punto Ellos">
-                        <svg class="icon" aria-hidden="true"><use href="#icon-minus"></use></svg>
-                    </button>
-                    <button class="btn-control btn-plus" data-action="plus" aria-label="Sumar punto Ellos">
-                        <svg class="icon" aria-hidden="true"><use href="#icon-plus"></use></svg>
-                    </button>
-                </div>
-                
-                <!--<div class="instruction-pill">
-                    <span>• TOQUE +1</span>
-                    <span>• MANTENER -1</span>
-                </div>-->
-                
-                <div class="touch-overlay"></div>
-            </section>
-        </main>
+        <!-- score board: dynamically populated by JS -->
+        <main class="score-board layout-two-col" id="score-board"></main>
 
         <footer class="app-footer">
-            <div class="mode-select-container">
-                <select id="game-mode-select" class="mode-select" aria-label="Modo de juego">
-                    <option value="30">A 30 Puntos</option>
-                    <option value="15">A 15 Puntos</option>
-                </select>
-            </div>
+            <select id="select-maxscore" class="mode-select" aria-label="Puntos máximos"></select>
         </footer>
     </div>
+
+    <!-- mode side panel -->
+    <div id="mode-panel" class="mode-panel" role="dialog" aria-label="Seleccionar modo" aria-hidden="true">
+        <div class="mode-panel-header">
+            <p class="mode-panel-title">Anotadores</p>
+            <button id="btn-close-panel" class="btn-icon btn-close-panel" aria-label="Cerrar menú">
+                <svg class="icon" aria-hidden="true"><use href="#icon-close"></use></svg>
+            </button>
+        </div>
+        <div id="mode-panel-list" class="mode-panel-list"></div>
+    </div>
+    <!-- backdrop -->
+    <div id="mode-backdrop" class="mode-backdrop"></div>
 
     <!-- modal de ganador -->
     <div id="winner-modal" class="modal hidden">
