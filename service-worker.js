@@ -12,7 +12,7 @@ if (IS_DEV) {
     );
   });
 } else {
-  const CACHE_VERSION = 'v1';
+  const CACHE_VERSION = 'v2.1';
   const CACHE_NAME = `anotador-cache-${CACHE_VERSION}`;
 
   const PRECACHE_URLS = [
