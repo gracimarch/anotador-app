@@ -984,6 +984,47 @@ body.dark-mode .pedro-player-select {
     opacity: 0.85;
 }
 
+.pedro-btn-sign {
+    flex-shrink: 0;
+    height: 38px;
+    min-width: 38px;
+    padding: 0 10px;
+    border-radius: 10px;
+    background-color: var(--bg-color);
+    color: var(--text-muted);
+    border: 2px solid var(--divider-color);
+    cursor: pointer;
+    font-family: var(--main-font);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+}
+.pedro-btn-sign-label {
+    font-size: 1.35rem;
+    font-weight: 800;
+    line-height: 1;
+    font-family: var(--main-font);
+    transition: color 0.18s ease;
+    user-select: none;
+}
+.pedro-btn-sign:focus {
+    outline: none;
+    border-color: var(--text-secondary);
+}
+.pedro-btn-sign.active {
+    background-color: var(--player-red-bg);
+    border-color: var(--player-red-color);
+    box-shadow: 0 0 0 1px var(--player-red-color);
+}
+.pedro-btn-sign.active .pedro-btn-sign-label {
+    color: var(--player-red-color);
+}
+.pedro-btn-sign:active {
+    opacity: 0.75;
+    transform: scale(0.94);
+}
+
 .pedro-btn-add {
     font-size: 0.85rem;
     font-weight: 600;
@@ -1059,6 +1100,8 @@ body.dark-mode .pedro-player-select {
     .pedro-points-input   { width: 58px; font-size: 0.9rem; padding: 7px 8px; }
     .pedro-btn-sumar      { padding: 8px 12px; font-size: 0.88rem; }
     .pedro-btn-add        { padding: 8px 9px; font-size: 0.8rem; gap: 4px; }
+    .pedro-btn-sign       { height: 34px; min-width: 34px; padding: 0 8px; }
+    .pedro-btn-sign-label { font-size: 1.15rem; }
 }
 
 @media (max-width: 380px) {
@@ -1067,5 +1110,7 @@ body.dark-mode .pedro-player-select {
     .pedro-player-select  { font-size: 0.78rem; padding: 6px 24px 6px 8px; }
     .pedro-points-input   { width: 52px; font-size: 0.85rem; padding: 6px 6px; }
     .pedro-btn-sumar      { padding: 7px 9px; font-size: 0.82rem; }
+    .pedro-btn-sign       { height: 30px; min-width: 30px; padding: 0 6px; }
+    .pedro-btn-sign-label { font-size: 1rem; }
     .pedro-btn-add        { padding: 7px 8px; font-size: 0.75rem; gap: 3px; }
 }

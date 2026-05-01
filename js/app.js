@@ -821,29 +821,45 @@ document.addEventListener('DOMContentLoaded', () => {
             const input = document.createElement('input');
             input.type = 'text'; input.className = 'pedro-points-input';
             input.id = 'pedro-points-input'; input.placeholder = 'Pts';
-            input.inputMode = 'decimal';
-            // Allow only integers (optional leading minus + digits); strip decimals in real time
+            input.inputMode = 'numeric';
+            // Allow only digits; no decimals
             input.addEventListener('input', () => {
-                const cleaned = input.value.replace(/[^0-9-]/g, '').replace(/(?!^)-/g, '');
+                const cleaned = input.value.replace(/[^0-9]/g, '');
                 if (input.value !== cleaned) input.value = cleaned;
+            });
+
+            // Sign toggle button (+/−)
+            const btnSign = document.createElement('button');
+            btnSign.className = 'pedro-btn-sign';
+            btnSign.id = 'pedro-btn-sign';
+            btnSign.type = 'button';
+            btnSign.dataset.sign = 'pos';
+            btnSign.innerHTML = '<span class="pedro-btn-sign-label">+</span>';
+            btnSign.setAttribute('aria-label', 'Cambiar signo');
+            btnSign.addEventListener('click', () => {
+                const isNeg = btnSign.classList.toggle('active');
+                btnSign.dataset.sign = isNeg ? 'neg' : 'pos';
+                btnSign.querySelector('.pedro-btn-sign-label').textContent = isNeg ? '−' : '+';
             });
 
             const btnSumar = document.createElement('button');
             btnSumar.className = 'pedro-btn-sumar';
             btnSumar.id = 'pedro-btn-sumar';
-            btnSumar.textContent = 'Sumar';
+            btnSumar.textContent = 'Aplicar';
             btnSumar.addEventListener('click', () => {
-                const pts = parseInt(input.value, 10);
-                if (!select.value || isNaN(pts) || pts === 0) return;
+                const digits = parseInt(input.value, 10);
+                if (!select.value || isNaN(digits) || digits === 0) return;
+                const pts = btnSign.classList.contains('active') ? -digits : digits;
                 updateScore(select.value, pts);
                 input.value = '';
+                btnSign.classList.remove('active');
                 input.focus();
             });
             input.addEventListener('keydown', e => { if (e.key === 'Enter') btnSumar.click(); });
 
             const row = document.createElement('div');
             row.className = 'pedro-bar-row';
-            row.appendChild(select); row.appendChild(input); row.appendChild(btnSumar);
+            row.appendChild(select); row.appendChild(input); row.appendChild(btnSign); row.appendChild(btnSumar);
 
             bar.appendChild(row);
             return bar;
