@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ─────────────────────────────────────────
     // MODE CONFIGURATION
-    // To add a new mode: add one entry here.
     // ─────────────────────────────────────────
     const MODES = {
         truco: {
@@ -30,15 +29,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const CASITAS_COUNT = 6;
     const POINTS_PER_CASITA = 5;
-    const STORAGE_KEY = 'truco-state-v4';
+    const STORAGE_KEY = 'anotador-v5';
 
     // ─────────────────────────────────────────
     // STATE
     // ─────────────────────────────────────────
     const state = {
         modeId: 'truco',
-        maxScore: 30,
         theme: 'light',
+        modes: {},
+        maxScore: 30,
         scores: {},
         names: {},
         pedro: { players: [], nextId: 1 }
@@ -47,50 +47,132 @@ document.addEventListener('DOMContentLoaded', () => {
     // ─────────────────────────────────────────
     // STORAGE
     // ─────────────────────────────────────────
-    function loadState() {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        if (!saved) { initFreshState(); return; }
-        try {
-            const p = JSON.parse(saved);
-            state.modeId = (p.modeId && MODES[p.modeId]) ? p.modeId : 'truco';
-            state.theme = p.theme || 'light';
-            const mode = MODES[state.modeId];
-            if (mode.type !== 'pedro') {
-                state.maxScore = mode.maxScores.includes(p.maxScore) ? p.maxScore : mode.defaultMaxScore;
-            }
+
+    function initModeDefaults(modeId) {
+        const mode = MODES[modeId];
+        if (mode.type === 'pedro') {
+            return { players: [], nextId: 1 };
+        }
+        const scores = {}, names = {};
+        mode.players.forEach(pl => {
+            scores[pl.id] = 0;
+            names[pl.id] = pl.defaultName;
+        });
+        return { maxScore: mode.defaultMaxScore, scores, names };
+    }
+
+    function activateModeSlot(modeId) {
+        if (!state.modes[modeId]) {
+            state.modes[modeId] = initModeDefaults(modeId);
+        }
+        state.modeId = modeId;
+        const slot = state.modes[modeId];
+        const mode = MODES[modeId];
+
+        if (mode.type === 'pedro') {
+            state.pedro = slot;
             state.scores = {};
             state.names = {};
+            state.maxScore = null;
+        } else {
+            if (!slot.scores) { slot.scores = {}; slot.names = {}; }
             mode.players.forEach(pl => {
-                state.scores[pl.id] = Math.min(Math.max(0, (p.scores && p.scores[pl.id]) || 0), state.maxScore);
-                state.names[pl.id] = (p.names && p.names[pl.id]) ? p.names[pl.id] : pl.defaultName;
+                if (!(pl.id in slot.scores)) slot.scores[pl.id] = 0;
+                if (!(pl.id in slot.names)) slot.names[pl.id] = pl.defaultName;
             });
-            if (p.pedro && Array.isArray(p.pedro.players)) {
-                state.pedro.players = p.pedro.players.map(pl => ({
-                    id: pl.id || `p_${Date.now()}`, name: pl.name || 'Jugador',
-                    score: parseInt(pl.score) || 0
-                }));
-                state.pedro.nextId = p.pedro.nextId || (state.pedro.players.length + 1);
-            }
-        } catch (e) {
-            console.error('Error loading state', e);
-            initFreshState();
+            if (!mode.maxScores.includes(slot.maxScore)) slot.maxScore = mode.defaultMaxScore;
+
+            state.scores = slot.scores;
+            state.names = slot.names;
+            state.maxScore = slot.maxScore;
+            state.pedro = { players: [], nextId: 1 };
         }
     }
 
-    function initFreshState() {
-        const mode = MODES[state.modeId];
-        state.scores = {};
-        state.names = {};
-        if (mode.type !== 'pedro') {
-            mode.players.forEach(pl => {
-                state.scores[pl.id] = 0;
-                state.names[pl.id] = pl.defaultName;
-            });
+    function loadState() {
+        const OLD_KEY = 'truco-state-v4';
+        const saved = localStorage.getItem(STORAGE_KEY);
+
+        if (!saved) {
+            const old = localStorage.getItem(OLD_KEY);
+            if (old) {
+                try {
+                    const p = JSON.parse(old);
+                    state.theme = p.theme || 'light';
+                    state.modes = {};
+                    const migratedId = (p.modeId && MODES[p.modeId]) ? p.modeId : 'truco';
+                    const migratedMode = MODES[migratedId];
+
+                    if (migratedMode.type === 'pedro') {
+                        state.modes[migratedId] = {
+                            players: (p.pedro && Array.isArray(p.pedro.players))
+                                ? p.pedro.players.map(pl => ({
+                                    id: pl.id || `p_${Date.now()}`,
+                                    name: pl.name || 'Jugador',
+                                    score: parseInt(pl.score) || 0
+                                }))
+                                : [],
+                            nextId: (p.pedro && p.pedro.nextId) || 1
+                        };
+                    } else {
+                        const scores = {}, names = {};
+                        const ms = migratedMode.maxScores.includes(p.maxScore)
+                            ? p.maxScore : migratedMode.defaultMaxScore;
+                        migratedMode.players.forEach(pl => {
+                            scores[pl.id] = Math.min(Math.max(0, (p.scores && p.scores[pl.id]) || 0), ms);
+                            names[pl.id] = (p.names && p.names[pl.id]) ? p.names[pl.id] : pl.defaultName;
+                        });
+                        state.modes[migratedId] = { maxScore: ms, scores, names };
+                        if (p.pedro && Array.isArray(p.pedro.players) && p.pedro.players.length > 0) {
+                            state.modes.pedro = {
+                                players: p.pedro.players.map(pl => ({
+                                    id: pl.id || `p_${Date.now()}`,
+                                    name: pl.name || 'Jugador',
+                                    score: parseInt(pl.score) || 0
+                                })),
+                                nextId: p.pedro.nextId || 1
+                            };
+                        }
+                    }
+
+                    activateModeSlot(migratedId);
+                    saveState();
+                    console.info('[Storage] Migrated truco-state-v4 → anotador-v5');
+                    return;
+                } catch (e) {
+                    console.error('[Storage] Migration error', e);
+                }
+            }
+            state.theme = 'light';
+            state.modes = {};
+            activateModeSlot('truco');
+            return;
+        }
+
+        try {
+            const p = JSON.parse(saved);
+            state.theme = p.theme || 'light';
+            state.modes = p.modes || {};
+            Object.keys(state.modes).forEach(id => { if (!MODES[id]) delete state.modes[id]; });
+            const modeId = (p.activeMode && MODES[p.activeMode]) ? p.activeMode : 'truco';
+            activateModeSlot(modeId);
+        } catch (e) {
+            console.error('[Storage] Error loading state', e);
+            state.theme = 'light';
+            state.modes = {};
+            activateModeSlot('truco');
         }
     }
 
     function saveState() {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        if (MODES[state.modeId].type !== 'pedro') {
+            state.modes[state.modeId].maxScore = state.maxScore;
+        }
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+            activeMode: state.modeId,
+            theme: state.theme,
+            modes: state.modes
+        }));
     }
 
     // ─────────────────────────────────────────
@@ -136,17 +218,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function switchMode(newModeId) {
         if (newModeId === state.modeId || !MODES[newModeId]) return;
-        state.modeId = newModeId;
-        const mode = MODES[newModeId];
-        if (mode.type !== 'pedro') {
-            if (!mode.maxScores.includes(state.maxScore)) state.maxScore = mode.defaultMaxScore;
-            state.scores = {};
-            state.names = {};
-            mode.players.forEach(pl => {
-                state.scores[pl.id] = 0;
-                state.names[pl.id] = pl.defaultName;
-            });
+        if (MODES[state.modeId].type !== 'pedro') {
+            state.modes[state.modeId].maxScore = state.maxScore;
         }
+        activateModeSlot(newModeId);
         saveState();
         Renderer.buildBoard();
         updateModeLabel();
@@ -744,17 +819,22 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             const input = document.createElement('input');
-            input.type = 'number'; input.className = 'pedro-points-input';
+            input.type = 'text'; input.className = 'pedro-points-input';
             input.id = 'pedro-points-input'; input.placeholder = 'Pts';
-            input.min = '1'; input.inputMode = 'numeric';
+            input.inputMode = 'decimal';
+            // Allow only integers (optional leading minus + digits); strip decimals in real time
+            input.addEventListener('input', () => {
+                const cleaned = input.value.replace(/[^0-9-]/g, '').replace(/(?!^)-/g, '');
+                if (input.value !== cleaned) input.value = cleaned;
+            });
 
             const btnSumar = document.createElement('button');
             btnSumar.className = 'pedro-btn-sumar';
             btnSumar.id = 'pedro-btn-sumar';
             btnSumar.textContent = 'Sumar';
             btnSumar.addEventListener('click', () => {
-                const pts = parseInt(input.value);
-                if (!select.value || !pts) return;
+                const pts = parseInt(input.value, 10);
+                if (!select.value || isNaN(pts) || pts === 0) return;
                 updateScore(select.value, pts);
                 input.value = '';
                 input.focus();
